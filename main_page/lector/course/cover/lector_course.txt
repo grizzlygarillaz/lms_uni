@@ -1,0 +1,65 @@
+<?php
+include $_SERVER['DOCUMENT_ROOT']."/templates/Base.php";
+include $_SERVER['DOCUMENT_ROOT']."/SQL/sql_connect.php";
+include "lector_tool.php";
+
+$topic=$sql->query("SELECT * FROM page WHERE lecture_id= '".$_GET[idl]. "' ");
+$page=$topic->fetch_assoc();
+
+$col_topic=$sql->query("SELECT * FROM page where lecture_id='".$_GET[idl]."' ");
+
+$i=1;
+
+?>
+    <div  class="my-3 p-3 bg-white rounded shadow-sm">
+
+        <nav id="topic" aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                <?php  while ($row=$col_topic->fetch_assoc()){ ?>
+                <li class="page-item "><a value="<?php echo $row['page_id'] ?>" class="page-link"  id="id_page" href="#"> <?php echo $i++?></a></li>
+                <?php }?>
+
+
+            </ul>
+        </nav>
+
+<!--        <h6 class="border-bottom border-gray pb-2 mb-0"> релю: --><?php //echo $page['title']   ?><!--  </h6>-->
+<!--        <div class="media text-muted pt-3">-->
+<!--            <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">-->
+<!--                --><?php //echo $page['description']   ?>
+<!--            </p>-->
+<!--        </div>-->
+    </div>
+
+<script>
+    $( document ).ready(function() {
+    $(document).on('click', '#id_page', function () {
+        console.log($('#id_page').val());
+       $.ajax ({
+           method:"POST",
+            url: "topic_page.php",
+           data: 'id_topic='+$('#id_page').val(),
+           success: function (http) {
+
+               $("#topic").append(html);
+           }
+
+       })
+    })
+
+
+    })
+
+</script>
+
+
+
+<?php
+print $_GET[id];
+include $_SERVER['DOCUMENT_ROOT']."/templates/Footer.php";
+
+?>

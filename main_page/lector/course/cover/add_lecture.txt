@@ -1,0 +1,126 @@
+<?php
+
+
+include $_SERVER['DOCUMENT_ROOT']."/templates/Base.php";
+include $_SERVER['DOCUMENT_ROOT']."/SQL/sql_connect.php";
+
+session_start();
+$cod=$_GET['id'];
+$rest =$sql-> query( "SELECT * FROM course where course_id='".$cod."'");
+$con = $rest->fetch_assoc();
+
+?>
+<form class="addcourse mx-auto" name="lecture" id="lecture" style="width: 75%"  >
+<!--   Сообщение об успешном добалвении лекции-->
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #d4edda ; color: #155724; border-color: #c3e6cb; ">
+                <div class="modal-header" style="border-bottom: 0px">
+                    <h5 class="modal-title" id="staticBackdropLabel">Лекция успешно добавлена</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer" style="border-top: 0px">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+<!--  Успешное добавление лекции     -->
+    <div class="alert alert-success" role="alert" id="save_topic" style="display: none">
+        Тема добавлена. Вы можете <a href=\"/main_page/lector/course.php?id=$id_course\" class=\"alert-link\">перейти на страницу лекции</a>.
+    </div>
+<!--    Темы лекции-->
+    <div class="topic" id="topic" style="display: none">
+
+            <h4 class="mb-3">Добавтье тему лекции</h4>
+            <div id="title" class=" mb-3">
+                <label >Наименование темы:  </label>
+                <input  id="topic_title" type="text" class="form-control" name="topic_title"  value="">
+            </div>
+            <div class=" mb-3">
+                <label >Содержание:</label>
+                <textarea name="topic_description" id="topic_description" class="form-control" style="height: 10rem"  ></textarea>
+            </div>
+        <button type="button" name="add_topic" id="add_topic" class="btn btn-outline-success">Сохранить тему</button>
+
+    </div>
+<!--    Тема лекции-->
+    <div name="about_course"
+         id="about_course" class="my-1 p-3 bg-white  shadow-sm " >
+        <h4 class="mb-3">Новая лекция</h4>
+
+            <div id="title" class=" mb-3">
+                <label >Название лекции </label>
+                <input  id="lecture_name" type="text" class="form-control" name="title"  value="">
+            </div>
+            <div class=" mb-3">
+                <label >Описание лекции</label>
+                <textarea name="description" id="description" class="form-control" style="height: 10rem"  ></textarea>
+            </div>
+
+<!--        <button type="button" id="add_lecture" class="btn btn-outline-success">Сохранить</button>-->
+        <button type="button" id="add_lecture" class="btn btn-outline-success" data-toggle="modal" data-target="#staticBackdrop">
+            Сохранить
+        </button>
+    </div>
+
+</form>
+<script>
+    $( document ).ready(function() {
+        $(document).on('click', '#add_lecture', function () {
+
+          var $idcourse = "<?php print $cod ?>";
+          var $action ="add_lecture";
+            $.ajax({
+                method: "POST",
+                url: "query_add_lecture.php",
+                data: 'title='+$('#lecture_name').val()+ '&description='+ $('#description').val()+'&id_course='+$idcourse +'&btn_action=' + $action ,
+            success: function (html) {
+                $('#about_course').css('display', 'none');
+                $('#topic').css('display','block');
+
+                $("#staticBackdrop").append(html);
+            },
+            })
+        })
+    });
+    $( document ).ready(function() {
+        $(document).on('click', '#add_topic', function () {
+console.log(document.getElementById('id_lecture').value);
+
+            $.ajax({
+                url:"query_topic.php",
+                method:"POST",
+                data: 'topic_title='+$('#topic_title').val()+'&topic_desc='+$('#topic_description').val()+'&id_lectop='+(document.getElementById('id_lecture').value ),
+                success: function (html) {
+
+                    $('#save_success').css('display','none');
+                     $('#save_topic').css('display','block');
+
+                    $('#about_course').css('display', 'none');
+                    $("#save_topic").append(html);
+                    document.getElementById('topic_title').value = '';
+                    document.getElementById('topic_description').value = '';
+                }
+            })
+        })
+
+    });
+
+
+</script>
+
+
+
+
+
+<?php
+
+
+
+include $_SERVER['DOCUMENT_ROOT'] . "/templates/Footer.php"; ?>

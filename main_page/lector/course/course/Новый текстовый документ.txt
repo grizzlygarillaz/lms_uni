@@ -1,0 +1,14 @@
+<script >
+            $( document ).ready(function() {
+                $("#add_lecture").click(function () {
+                    $.ajax({
+                        url: "add_lecture.php",
+                        success: function (html) {
+                            $("#add_course").after(html);
+                        }
+                    });
+                    return false;
+                });
+                $("#add_course").first().click();
+            });
+        </script>
